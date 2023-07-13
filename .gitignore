@@ -3,7 +3,8 @@ Thumbs.db*
 HELP.md
 .gradle
 build/
-data/
+datamysql/
+datapostgresql/
 
 ### STS ###
 .apt_generated

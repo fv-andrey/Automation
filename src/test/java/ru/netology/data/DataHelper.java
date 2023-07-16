@@ -16,12 +16,8 @@ public class DataHelper {
         return new Faker(new Locale(locale));
     }
 
-    public static String generateMonth(int shift) {
-        return LocalDate.now().plusMonths(shift).format(DateTimeFormatter.ofPattern("MM"));
-    }
-
-    public static String generateYear(int shift) {
-        return LocalDate.now().plusYears(shift).format(DateTimeFormatter.ofPattern("yy"));
+    public static String symbol() {
+        return "@#$%&*volf";
     }
 
     @Value
@@ -51,7 +47,7 @@ public class DataHelper {
     }
 
     public static Month checkMonth(int shift) {
-        return new Month(generateMonth(shift));
+        return new Month(LocalDate.now().plusMonths(shift).format(DateTimeFormatter.ofPattern("MM")));
     }
 
     public static Month invalidMonth(String value) {
@@ -64,7 +60,7 @@ public class DataHelper {
     }
 
     public static Year checkYear(int shift) {
-        return new Year(generateYear(shift));
+        return new Year(LocalDate.now().plusYears(shift).format(DateTimeFormatter.ofPattern("yy")));
     }
 
     public static Year invalidYear(String value) {

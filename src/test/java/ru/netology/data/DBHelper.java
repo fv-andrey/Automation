@@ -37,7 +37,7 @@ public class DBHelper {
     @SneakyThrows
     public static String getStatusCredit() {
         var select = "select status from credit_request_entity order by created desc limit 1";
-         return runner(select);
+        return runner(select);
     }
 
     @SneakyThrows

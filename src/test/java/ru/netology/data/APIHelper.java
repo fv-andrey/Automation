@@ -22,7 +22,7 @@ public class APIHelper {
     private APIHelper() {
     }
 
-    public static String getStatus(DataHelper.CardInfo cardInfo, String path) {
+    public static String response(DataHelper.CardInfo cardInfo, String path, int statusCode, String key) {
         Response response =
                 given()
                         .spec(requestSpec)
@@ -30,17 +30,8 @@ public class APIHelper {
                         .post(path)
                         .then()
                         .contentType(ContentType.JSON)
-                        .statusCode(200)
+                        .statusCode(statusCode)
                         .extract().response();
-        return response.jsonPath().getString("status");
-    }
-
-    public static void request(DataHelper.CardInfo cardInfo, String path, int statusCode) {
-        given()
-                .spec(requestSpec)
-                .body(cardInfo)
-                .post(path)
-                .then()
-                .statusCode(statusCode);
+        return response.jsonPath().getString(key);
     }
 }

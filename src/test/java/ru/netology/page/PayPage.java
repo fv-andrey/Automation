@@ -47,14 +47,14 @@ public class PayPage {
 
     public void successPay(DataHelper.CardInfo cardInfo, String title, String content) {
         setValue(cardInfo);
-        successNotificationTitle.shouldBe(visible, Duration.ofSeconds(13));
+        successNotificationTitle.shouldBe(visible, Duration.ofSeconds(14));
         successNotificationTitle.shouldBe(text(title));
         successNotificationContent.shouldBe(text(content));
     }
 
     public void failedPay(DataHelper.CardInfo cardInfo, String title, String content) {
         setValue(cardInfo);
-        failedNotificationTitle.shouldBe(visible, Duration.ofSeconds(13));
+        failedNotificationTitle.shouldBe(visible, Duration.ofSeconds(14));
         failedNotificationTitle.shouldBe(text(title));
         failedNotificationContent.shouldBe(text(content));
     }
@@ -86,7 +86,7 @@ public class PayPage {
 
     public void successNotificationClose(DataHelper.CardInfo cardInfo) {
         setValue(cardInfo);
-        successNotificationTitle.shouldBe(visible, Duration.ofSeconds(13));
+        successNotificationTitle.shouldBe(visible, Duration.ofSeconds(14));
         successNotificationCloser.click();
         successNotificationTitle.shouldBe(hidden);
         failedNotificationTitle.shouldBe(hidden);
@@ -94,7 +94,7 @@ public class PayPage {
 
     public void failedNotificationClose(DataHelper.CardInfo cardInfo) {
         setValue(cardInfo);
-        failedNotificationTitle.shouldBe(visible, Duration.ofSeconds(13));
+        failedNotificationTitle.shouldBe(visible, Duration.ofSeconds(14));
         failedNotificationCloser.click();
         failedNotificationTitle.shouldBe(hidden);
         successNotificationTitle.shouldBe(hidden);

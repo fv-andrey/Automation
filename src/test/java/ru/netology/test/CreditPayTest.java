@@ -91,7 +91,7 @@ public class CreditPayTest {
     public void inputSymbolAndLatinInNumberField() {
         int length = 0;
         assertEquals(length, new MainPage().toCreditPage()
-                .lengthNumberField("@#$%&*volf"));
+                .lengthNumberField(symbol()));
     }
 
     @Test
@@ -153,7 +153,7 @@ public class CreditPayTest {
     public void inputSymbolInMonthField() {
         int length = 0;
         assertEquals(length, new MainPage().toCreditPage()
-                .lengthMonthField("@#$%&*volf"));
+                .lengthMonthField(symbol()));
     }
 
     @Test
@@ -203,7 +203,7 @@ public class CreditPayTest {
     public void inputSymbolAndLatinInYearField() {
         int length = 0;
         assertEquals(length, new MainPage().toCreditPage()
-                .lengthYearField("@#$%&*volf"));
+                .lengthYearField(symbol()));
     }
 
     @Test
@@ -238,7 +238,7 @@ public class CreditPayTest {
         new MainPage()
                 .toCreditPage()
                 .setInvalidValue(getCardInfo(approvedCard(),
-                                checkYear(0), checkMonth(0), invalidOwner("@#$%&*"), cvv()),
+                                checkYear(0), checkMonth(0), invalidOwner(symbol()), cvv()),
                         msg);
         assertEquals(initCount, getCountOrder());
     }
@@ -273,7 +273,7 @@ public class CreditPayTest {
     public void lengthCVCOfSymbolAndLatin() {
         int length = 0;
         assertEquals(length, new MainPage().toCreditPage()
-                .lengthCVCField("@#$%&*volf"));
+                .lengthCVCField(symbol()));
     }
 
     @Test

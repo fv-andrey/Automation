@@ -17,7 +17,7 @@ public class DBHelper {
     private static Connection conn;
 
     static {
-        try (FileInputStream appPropertiesFile = new FileInputStream("./application.properties")) {
+        try (FileInputStream appPropertiesFile = new FileInputStream("application.properties")) {
             Properties appProperties = new Properties();
             appProperties.load(appPropertiesFile);
 
@@ -30,15 +30,20 @@ public class DBHelper {
     }
 
     @SneakyThrows
+    public static String runner(String select) {
+        return queryRunner.query(conn, select, new ScalarHandler<>());
+    }
+
+    @SneakyThrows
     public static String getStatusCredit() {
         var select = "select status from credit_request_entity order by created desc limit 1";
-        return queryRunner.query(conn, select, new ScalarHandler<>());
+         return runner(select);
     }
 
     @SneakyThrows
     public static String getStatusPay() {
         var select = "select status from payment_entity order by created desc limit 1";
-        return queryRunner.query(conn, select, new ScalarHandler<>());
+        return runner(select);
     }
 
     @SneakyThrows
@@ -50,7 +55,31 @@ public class DBHelper {
     @SneakyThrows
     public static int getCountOrder() {
         var select = "select count(*) from order_entity";
-        Long count = queryRunner.query(conn, select, new ScalarHandler<>());
-        return count.intValue();
+        long result = queryRunner.query(conn, select, new ScalarHandler<>());
+        return (int) result;
+    }
+
+    @SneakyThrows
+    public static String getTransactionId() {
+        var select = "select transaction_id from payment_entity order by created desc limit 1";
+        return runner(select);
+    }
+
+    @SneakyThrows
+    public static String getBankId() {
+        var select = "select bank_id from credit_request_entity order by created desc limit 1";
+        return runner(select);
+    }
+
+    @SneakyThrows
+    public static String getPaymentId() {
+        var select = "select payment_id from order_entity order by created desc limit 1";
+        return runner(select);
+    }
+
+    @SneakyThrows
+    public static String getCreditId() {
+        var select = "select credit_id from order_entity order by created desc limit 1";
+        return runner(select);
     }
 }

@@ -7,9 +7,9 @@ import static ru.netology.data.APIHelper.*;
 import static ru.netology.data.DBHelper.*;
 import static ru.netology.data.DataHelper.*;
 
-public class APIPayTest {
+public class APICreditTest {
 
-    String path = "/pay";
+    String path = "/credit";
 
     @Test
     public void payApprovedCardAPI() {
@@ -18,7 +18,7 @@ public class APIPayTest {
                 path);
 
         assertEquals(status().getApproved(), status);
-        assertEquals(status, getStatusPay());
+        assertEquals(status, getStatusCredit());
     }
 
     @Test
@@ -28,7 +28,7 @@ public class APIPayTest {
                 path);
 
         assertEquals(status().getDeclined(), status);
-        assertEquals(status, getStatusPay());
+        assertEquals(status, getStatusCredit());
     }
 
     @Test
@@ -55,8 +55,8 @@ public class APIPayTest {
     public void randomCardAPI() {
         int initCount = getCountOrder();
         int statusCode = 400;
-        request(getCardInfo(randomNumber(), checkYear(0), checkMonth(0), validOwner(), cvv()), path,
-                statusCode);
+        request(getCardInfo(randomNumber(), checkYear(0), checkMonth(0), validOwner(), cvv()),
+                path, statusCode);
         assertEquals(initCount, getCountOrder());
     }
 
@@ -73,8 +73,8 @@ public class APIPayTest {
     public void lastMonthAPI() {
         int initCount = getCountOrder();
         int statusCode = 400;
-        request(getCardInfo(approvedCard(), checkYear(0), checkMonth(-1), validOwner(), cvv()), path,
-                statusCode);
+        request(getCardInfo(approvedCard(), checkYear(0), checkMonth(-1), validOwner(), cvv()),
+                path, statusCode);
         assertEquals(initCount, getCountOrder());
     }
 
@@ -182,8 +182,8 @@ public class APIPayTest {
         int initCount = getCountOrder();
         int statusCode = 400;
         request(getCardInfo(approvedCard(), checkYear(0), checkMonth(0),
-                        invalidOwner(generateValue("en").numerify("###")), cvv()), path,
-                statusCode);
+                        invalidOwner(generateValue("en").numerify("###")), cvv()),
+                path, statusCode);
         assertEquals(initCount, getCountOrder());
     }
 
@@ -202,8 +202,8 @@ public class APIPayTest {
         int initCount = getCountOrder();
         int statusCode = 400;
         request(getCardInfo(approvedCard(), checkYear(0), checkMonth(0), validOwner(),
-                        invalidCVV(generateValue("en").numerify("##"))), path,
-                statusCode);
+                        invalidCVV(generateValue("en").numerify("##"))),
+                path, statusCode);
         assertEquals(initCount, getCountOrder());
     }
 
@@ -212,8 +212,8 @@ public class APIPayTest {
         int initCount = getCountOrder();
         int statusCode = 400;
         request(getCardInfo(approvedCard(), checkYear(0), checkMonth(0), validOwner(),
-                        invalidCVV(generateValue("en").numerify("####"))), path,
-                statusCode);
+                        invalidCVV(generateValue("en").numerify("####"))),
+                path, statusCode);
         assertEquals(initCount, getCountOrder());
     }
 
@@ -222,8 +222,8 @@ public class APIPayTest {
         int initCount = getCountOrder();
         int statusCode = 400;
         request(getCardInfo(approvedCard(), checkYear(0), checkMonth(0), validOwner(),
-                        invalidCVV("@#$%&*volf")), path,
-                statusCode);
+                        invalidCVV("@#$%&*volf")),
+                path, statusCode);
         assertEquals(initCount, getCountOrder());
     }
 
@@ -232,8 +232,8 @@ public class APIPayTest {
         int initCount = getCountOrder();
         int statusCode = 400;
         request(getCardInfo(invalidNumber(""), invalidYear(""), invalidMonth(""), invalidOwner(""),
-                        invalidCVV("")), path,
-                statusCode);
+                        invalidCVV("")),
+                path, statusCode);
         assertEquals(initCount, getCountOrder());
     }
 }

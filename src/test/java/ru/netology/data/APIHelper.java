@@ -29,16 +29,17 @@ public class APIHelper {
                         .body(cardInfo)
                         .post(path)
                         .then()
+                        .contentType(ContentType.JSON)
                         .statusCode(200)
                         .extract().response();
         return response.jsonPath().getString("status");
     }
 
-    public static void payRequest(DataHelper.CardInfo cardInfo, int statusCode) {
+    public static void request(DataHelper.CardInfo cardInfo, String path, int statusCode) {
         given()
                 .spec(requestSpec)
                 .body(cardInfo)
-                .post("/pay")
+                .post(path)
                 .then()
                 .statusCode(statusCode);
     }

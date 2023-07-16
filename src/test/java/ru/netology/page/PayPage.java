@@ -24,13 +24,13 @@ public class PayPage {
     SelenideElement failedNotificationTitle = $$(".notification__title").get(1);
     SelenideElement failedNotificationContent = $$(".notification__content").get(1);
     SelenideElement continueButton = $$("[role='button']").find(exactText("Продолжить"));
-    SelenideElement infoAmount = $$(".list__item").findBy(text("руб.!"));
     SelenideElement successNotificationCloser = $$("[type='button'].notification__closer").get(0);
     SelenideElement failedNotificationCloser = $$("[type='button'].notification__closer").get(1);
-    private final String balanceStart = "Всего ";
-    private final String balanceFinish = " 000 руб.!";
-    private final String balanceStart1 = "Всего 45 ";
-    private final String balanceFinish1 = " руб.!";
+    static SelenideElement infoAmount = $$(".list__item").findBy(text("руб.!"));
+    static String balanceStart = "Всего ";
+    static String balanceFinish = " 000 руб.!";
+    static String balanceStart1 = "Всего 45 ";
+    static String balanceFinish1 = " руб.!";
 
     public PayPage() {
         heading.shouldBe(visible);
@@ -38,8 +38,8 @@ public class PayPage {
 
     public void setValue(DataHelper.CardInfo cardInfo) {
         cardNumber.setValue(cardInfo.getNumber());
-        year.setValue(cardInfo.getYear());
         month.setValue(cardInfo.getMonth());
+        year.setValue(cardInfo.getYear());
         owner.setValue(cardInfo.getHolder());
         cvc.setValue(cardInfo.getCvc());
         continueButton.click();
@@ -47,14 +47,14 @@ public class PayPage {
 
     public void successPay(DataHelper.CardInfo cardInfo, String title, String content) {
         setValue(cardInfo);
-        successNotificationTitle.shouldBe(visible, Duration.ofSeconds(12));
+        successNotificationTitle.shouldBe(visible, Duration.ofSeconds(13));
         successNotificationTitle.shouldBe(text(title));
         successNotificationContent.shouldBe(text(content));
     }
 
     public void failedPay(DataHelper.CardInfo cardInfo, String title, String content) {
         setValue(cardInfo);
-        failedNotificationTitle.shouldBe(visible, Duration.ofSeconds(12));
+        failedNotificationTitle.shouldBe(visible, Duration.ofSeconds(13));
         failedNotificationTitle.shouldBe(text(title));
         failedNotificationContent.shouldBe(text(content));
     }
@@ -64,12 +64,7 @@ public class PayPage {
         return cardNumber.getAttribute("value").length();
     }
 
-    public void setInvalidCardNumber(DataHelper.CardInfo cardInfo, String msg) {
-        setValue(cardInfo);
-        invalidInput.get(0).shouldBe(visible, text(msg));
-    }
-
-    public void setInvalidMonth(DataHelper.CardInfo cardInfo, String msg) {
+    public void setInvalidValue(DataHelper.CardInfo cardInfo, String msg) {
         setValue(cardInfo);
         invalidInput.get(0).shouldBe(visible, text(msg));
     }
@@ -79,24 +74,9 @@ public class PayPage {
         return month.getAttribute("value").length();
     }
 
-    public void setInvalidYear(DataHelper.CardInfo cardInfo, String msg) {
-        setValue(cardInfo);
-        invalidInput.get(0).shouldBe(visible, text(msg));
-    }
-
     public int lengthYearField(String value) {
         year.setValue(value);
         return year.getAttribute("value").length();
-    }
-
-    public void setInvalidOwner(DataHelper.CardInfo cardInfo, String msg) {
-        setValue(cardInfo);
-        invalidInput.get(0).shouldBe(visible, text(msg));
-    }
-
-    public void setInvalidCVC(DataHelper.CardInfo cardInfo, String msg) {
-        setValue(cardInfo);
-        invalidInput.get(0).shouldBe(visible, text(msg));
     }
 
     public int lengthCVCField(String value) {
@@ -106,7 +86,7 @@ public class PayPage {
 
     public void successNotificationClose(DataHelper.CardInfo cardInfo) {
         setValue(cardInfo);
-        successNotificationTitle.shouldBe(visible, Duration.ofSeconds(12));
+        successNotificationTitle.shouldBe(visible, Duration.ofSeconds(13));
         successNotificationCloser.click();
         successNotificationTitle.shouldBe(hidden);
         failedNotificationTitle.shouldBe(hidden);
@@ -114,7 +94,7 @@ public class PayPage {
 
     public void failedNotificationClose(DataHelper.CardInfo cardInfo) {
         setValue(cardInfo);
-        failedNotificationTitle.shouldBe(visible, Duration.ofSeconds(12));
+        failedNotificationTitle.shouldBe(visible, Duration.ofSeconds(13));
         failedNotificationCloser.click();
         failedNotificationTitle.shouldBe(hidden);
         successNotificationTitle.shouldBe(hidden);
@@ -129,7 +109,7 @@ public class PayPage {
         invalidInput.get(4).shouldBe(visible, text(msg));
     }
 
-    public int extractAmount(String text) {
+    public static int extractAmount(String text) {
         var start = text.indexOf(balanceStart);
         var finish = text.indexOf(balanceFinish);
         var value = text.substring(start + balanceStart.length(), finish);
@@ -140,7 +120,7 @@ public class PayPage {
         return Integer.parseInt(finishValue);
     }
 
-    public int getAmountInfo() {
+    public static int getAmountInfo() {
         var text = infoAmount.text();
         return extractAmount(text);
     }

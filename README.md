@@ -1,1 +1,32 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/9lauaeir25nockj3/branch/main?svg=true)](https://ci.appveyor.com/project/fv-andrey/automation/branch/main)
+[![Build status](https://ci.appveyor.com/api/projects/status/9lauaeir25nockj3/branch/main?svg=true)](https://ci.appveyor.com/project/fv-andrey/automation/branch/main) 
+# Описание сервиса, взаимодействующего с СУБД и API банка.
+
+![главная страница](plans&reports/pictures/service.png)
+
+Приложение предлагает купить тур по определённой цене двумя способами:
+
+1. Обычная оплата по дебетовой карте.
+2. Уникальная технология: выдача кредита по данным банковской карты.
+
+Приложение в собственной СУБД должно сохранять информацию о том, успешно ли был совершён платёж и каким способом.
+
+СУБД:
+
+* MySQL;
+* PostgreSQL.
+# Запуск авто-тестов:
+1. Клонировать репозиторий проекта
+2. Запустить программу Docker Desktop
+3. Открыть терминал в корне проекта
+4. В терминале выполнить команду `docker-compose up`
+5. Открыть терминал в корне проекта
+6. В терминале выполнить команду `java -jar .\artifacts\aqa-shop.jar`
+7. Запустить тесты
+#### Получение отчета Gradle, Allure
+1. Открыть терминал в корне проекта
+2. В терминале выполнить команды - `./gradlew clean test`, `./gradlew allureServe`
+#### Для переключения между СУБД
+1. Остановить запущенное приложение сочетанием клавиш `Ctrl c` в терминале
+2. В файле `aplication.properties` раскомментировать переменную `spring.datasource.url` с необходимым параметром для подключения к нужной СУБД (mysql, postgresql) и закомментировать ненужную - символом **#**
+3. В терминале корня проекта выполнить команду `java -jar .\artifacts\aqa-shop.jar`
+4. Запустить тесты

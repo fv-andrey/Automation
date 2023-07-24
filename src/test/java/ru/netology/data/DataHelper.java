@@ -16,87 +16,46 @@ public class DataHelper {
         return new Faker(new Locale(locale));
     }
 
-    public static String symbol() {
+    public static String getSymbolString() {
         return "@#$%&*volf";
     }
 
-    @Value
-    public static class CardNumber {
-        String number;
+    public static String getApprovedCard() {
+        return "1111 2222 3333 4444";
     }
 
-    public static CardNumber approvedCard() {
-        return new CardNumber("1111 2222 3333 4444");
+    public static String getDeclinedCard() {
+        return "5555 6666 7777 8888";
     }
 
-    public static CardNumber declinedCard() {
-        return new CardNumber("5555 6666 7777 8888");
+    public static String getRandomCard() {
+        return generateValue("ru").numerify("#### #### #### ####");
     }
 
-    public static CardNumber invalidNumber(String value) {
-        return new CardNumber(value);
+    public static String getMonth(int shift) {
+        return LocalDate.now().plusMonths(shift).format(DateTimeFormatter.ofPattern("MM"));
     }
 
-    public static CardNumber randomNumber() {
-        return new CardNumber(generateValue("ru").numerify("#### #### #### ####"));
+    public static String getYear(int shift) {
+        return LocalDate.now().plusYears(shift).format(DateTimeFormatter.ofPattern("yy"));
     }
 
-    @Value
-    public static class Month {
-        String month;
+    public static String getValidOwner() {
+        return generateValue("en").name().firstName() +
+                " " + generateValue("en").name().lastName();
     }
 
-    public static Month checkMonth(int shift) {
-        return new Month(LocalDate.now().plusMonths(shift).format(DateTimeFormatter.ofPattern("MM")));
+    public static String getOwnerOfRu() {
+        return generateValue("ru").name().firstName() + " "
+                + generateValue("ru").name().lastName();
     }
 
-    public static Month invalidMonth(String value) {
-        return new Month(value);
+    public static String getCvv() {
+        return generateValue("en").numerify("###");
     }
 
-    @Value
-    public static class Year {
-        String year;
-    }
-
-    public static Year checkYear(int shift) {
-        return new Year(LocalDate.now().plusYears(shift).format(DateTimeFormatter.ofPattern("yy")));
-    }
-
-    public static Year invalidYear(String value) {
-        return new Year(value);
-    }
-
-    @Value
-    public static class CardOwner {
-        String owner;
-    }
-
-    public static CardOwner validOwner() {
-        return new CardOwner(generateValue("en").name().firstName() +
-                " " + generateValue("en").name().lastName());
-    }
-
-    public static CardOwner ownerRu() {
-        return new CardOwner(generateValue("ru").name().firstName() + " "
-                + generateValue("ru").name().lastName());
-    }
-
-    public static CardOwner invalidOwner(String value) {
-        return new CardOwner(value);
-    }
-
-    @Value
-    public static class CVC {
-        String cvc;
-    }
-
-    public static CVC cvv() {
-        return new CVC(generateValue("en").numerify("###"));
-    }
-
-    public static CVC invalidCVV(String value) {
-        return new CVC(value);
+    public static String setInvalidValue(String value) {
+        return value;
     }
 
     @Value
@@ -105,7 +64,7 @@ public class DataHelper {
         String declined;
     }
 
-    public static CardStatus status() {
+    public static CardStatus initCardStatus() {
         return new CardStatus("APPROVED", "DECLINED");
     }
 
@@ -118,7 +77,7 @@ public class DataHelper {
         String cvc;
     }
 
-    public static CardInfo getCardInfo(CardNumber number, Year year, Month month, CardOwner owner, CVC cvv) {
-        return new CardInfo(number.getNumber(), year.getYear(), month.getMonth(), owner.getOwner(), cvv.getCvc());
+    public static CardInfo getCardInfo(String number, String year, String month, String owner, String cvv) {
+        return new CardInfo (number, year, month, owner, cvv);
     }
 }

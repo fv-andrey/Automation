@@ -7,12 +7,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.netology.page.MainPage;
+import ru.netology.page.PayPage;
 
 import static com.codeborne.selenide.Selenide.open;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static ru.netology.data.DBHelper.*;
 import static ru.netology.data.DataHelper.*;
-import static ru.netology.page.PayPage.*;
 
 public class PayTest {
 
@@ -33,53 +33,42 @@ public class PayTest {
 
     @Test
     public void payApprovedCard() {
-        String title = "Успешно";
-        String content = "Операция одобрена Банком.";
         new MainPage()
                 .toPayPage()
-                .successPay(getCardInfo(approvedCard(),
-                                checkYear(0), checkMonth(0), validOwner(), cvv()),
-                        title, content);
-        assertEquals(status().getApproved(), getStatusPay());
-        assertEquals(getTransactionId(), getPaymentId());
-        assertEquals(getAmountInfo(), getAmountPay());
+                .shouldByMsgSuccessPay(getCardInfo(getApprovedCard(),
+                                getYear(0), getMonth(0), getValidOwner(), getCvv()));
+        assertEquals(initCardStatus().getApproved(), getPaymentInfo().getStatus());
+        assertEquals(getPaymentInfo().getTransaction_id(), getOrderInfo().getPayment_id());
+        assertEquals(new PayPage().getAmountInfo(), getPaymentInfo().getAmount());
     }
 
     @Test
     public void payDeclinedCard() {
-        String title = "Ошибка";
-        String content = "Ошибка! Банк отказал в проведении операции";
         new MainPage()
                 .toPayPage()
-                .failedPay(getCardInfo(declinedCard(),
-                                checkYear(0), checkMonth(0), validOwner(), cvv()),
-                        title, content);
-        assertEquals(status().getDeclined(), getStatusPay());
-        assertEquals(getAmountInfo(), getAmountPay());
+                .shouldByMsgFailedPay(getCardInfo(getDeclinedCard(),
+                                getYear(0), getMonth(0), getValidOwner(), getCvv()));
+        assertEquals(initCardStatus().getDeclined(), getPaymentInfo().getStatus());
+        assertEquals(new PayPage().getAmountInfo(), getPaymentInfo().getAmount());
     }
 
     @Test
     public void invalidCardNumberOneLess() {
         int initCount = getCountOrder();
-        String msg = "Неверный формат";
         new MainPage()
                 .toPayPage()
-                .setInvalidValue(getCardInfo(invalidNumber(generateValue("en").numerify("#").repeat(15)),
-                                checkYear(0), checkMonth(0), validOwner(), cvv()),
-                        msg);
+                .shouldBeMsgWrongFormat(getCardInfo(setInvalidValue(generateValue("en").numerify("#").repeat(15)),
+                                getYear(0), getMonth(0), getValidOwner(), getCvv()));
         assertEquals(initCount, getCountOrder());
     }
 
     @Test
     public void randomCard() {
         int initCount = getCountOrder();
-        String title = "Ошибка";
-        String content = "Ошибка! Банк отказал в проведении операции";
         new MainPage()
                 .toPayPage()
-                .failedPay(getCardInfo(randomNumber(),
-                                checkYear(0), checkMonth(0), validOwner(), cvv()),
-                        title, content);
+                .shouldByMsgFailedPay(getCardInfo(getRandomCard(),
+                                getYear(0), getMonth(0), getValidOwner(), getCvv()));
         assertEquals(initCount, getCountOrder());
     }
 
@@ -87,61 +76,53 @@ public class PayTest {
     public void maxLengthNumberField() {
         int length = 19;
         assertEquals(length, new MainPage().toPayPage()
-                .lengthNumberField(generateValue("en").numerify("#").repeat(17)));
+                .getLengthNumberField(generateValue("en").numerify("#").repeat(17)));
     }
 
     @Test
     public void inputSymbolAndLatinInNumberField() {
         int length = 0;
         assertEquals(length, new MainPage().toPayPage()
-                .lengthNumberField(symbol()));
+                .getLengthNumberField(getSymbolString()));
     }
 
     @Test
     public void lastMonth() {
         int initCount = getCountOrder();
-        String msg = "Неверно указан срок действия карты";
         new MainPage()
                 .toPayPage()
-                .setInvalidValue(getCardInfo(approvedCard(),
-                                checkYear(0), checkMonth(-1), validOwner(), cvv()),
-                        msg);
+                .shouldBeMsgInvalidExpirationDate(getCardInfo(getApprovedCard(),
+                                getYear(0), getMonth(-1), getValidOwner(), getCvv()));
         assertEquals(initCount, getCountOrder());
     }
 
     @Test
     public void invalidMonth00() {
         int initCount = getCountOrder();
-        String msg = "Неверно указан срок действия карты";
         new MainPage()
                 .toPayPage()
-                .setInvalidValue(getCardInfo(approvedCard(),
-                                checkYear(0), invalidMonth("00"), validOwner(), cvv()),
-                        msg);
+                .shouldBeMsgInvalidExpirationDate(getCardInfo(getApprovedCard(),
+                                getYear(0), setInvalidValue("00"), getValidOwner(), getCvv()));
         assertEquals(initCount, getCountOrder());
     }
 
     @Test
     public void invalidMonth13() {
         int initCount = getCountOrder();
-        String msg = "Неверно указан срок действия карты";
         new MainPage()
                 .toPayPage()
-                .setInvalidValue(getCardInfo(approvedCard(),
-                                checkYear(0), invalidMonth("13"), validOwner(), cvv()),
-                        msg);
+                .shouldBeMsgInvalidExpirationDate(getCardInfo(getApprovedCard(),
+                                getYear(0), setInvalidValue("13"), getValidOwner(), getCvv()));
         assertEquals(initCount, getCountOrder());
     }
 
     @Test
     public void invalidMonthLengthIsOne() {
         int initCount = getCountOrder();
-        String msg = "Неверный формат";
         new MainPage()
                 .toPayPage()
-                .setInvalidValue(getCardInfo(approvedCard(),
-                                checkYear(0), invalidMonth("1"), validOwner(), cvv()),
-                        msg);
+                .shouldBeMsgWrongFormat(getCardInfo(getApprovedCard(),
+                                getYear(0), setInvalidValue("1"), getValidOwner(), getCvv()));
         assertEquals(initCount, getCountOrder());
     }
 
@@ -149,49 +130,43 @@ public class PayTest {
     public void lengthMonthField() {
         int length = 2;
         assertEquals(length, new MainPage().toPayPage()
-                .lengthMonthField(generateValue("en").numerify("###")));
+                .getLengthMonthField(generateValue("en").numerify("###")));
     }
 
     @Test
     public void inputSymbolInMonthField() {
         int length = 0;
         assertEquals(length, new MainPage().toPayPage()
-                .lengthMonthField(symbol()));
+                .getLengthMonthField(getSymbolString()));
     }
 
     @Test
     public void lastYear() {
         int initCount = getCountOrder();
-        String msg = "Истёк срок действия карты";
         new MainPage()
                 .toPayPage()
-                .setInvalidValue(getCardInfo(approvedCard(),
-                                checkYear(-1), checkMonth(0), validOwner(), cvv()),
-                        msg);
+                .shouldBeMsgCardExpired(getCardInfo(getApprovedCard(),
+                                getYear(-1), getMonth(0), getValidOwner(), getCvv()));
         assertEquals(initCount, getCountOrder());
     }
 
     @Test
     public void nextSixYear() {
         int initCount = getCountOrder();
-        String msg = "Неверно указан срок действия карты";
         new MainPage()
                 .toPayPage()
-                .setInvalidValue(getCardInfo(approvedCard(),
-                                checkYear(6), checkMonth(0), validOwner(), cvv()),
-                        msg);
+                .shouldBeMsgInvalidExpirationDate(getCardInfo(getApprovedCard(),
+                                getYear(6), getMonth(0), getValidOwner(), getCvv()));
         assertEquals(initCount, getCountOrder());
     }
 
     @Test
     public void invalidYearLengthIsOne() {
         int initCount = getCountOrder();
-        String msg = "Неверный формат";
         new MainPage()
                 .toPayPage()
-                .setInvalidValue(getCardInfo(approvedCard(),
-                                invalidYear("1"), checkMonth(0), validOwner(), cvv()),
-                        msg);
+                .shouldBeMsgWrongFormat(getCardInfo(getApprovedCard(),
+                                setInvalidValue("1"), getMonth(0), getValidOwner(), getCvv()));
         assertEquals(initCount, getCountOrder());
     }
 
@@ -199,76 +174,66 @@ public class PayTest {
     public void lengthYearField() {
         int length = 2;
         assertEquals(length, new MainPage().toPayPage()
-                .lengthYearField(generateValue("en").numerify("###")));
+                .getLengthYearField(generateValue("en").numerify("###")));
     }
 
     @Test
     public void inputSymbolAndLatinInYearField() {
         int length = 0;
         assertEquals(length, new MainPage().toPayPage()
-                .lengthYearField(symbol()));
+                .getLengthYearField(getSymbolString()));
     }
 
     @Test
     public void invalidOwnerOfRuSymbol() {
         int initCount = getCountOrder();
-        String msg = "Неверный формат";
         new MainPage()
                 .toPayPage()
-                .setInvalidValue(getCardInfo(approvedCard(),
-                                checkYear(0), checkMonth(0), ownerRu(), cvv()),
-                        msg);
+                .shouldBeMsgWrongFormat(getCardInfo(getApprovedCard(),
+                                getYear(0), getMonth(0), getOwnerOfRu(), getCvv()));
         assertEquals(initCount, getCountOrder());
     }
 
     @Test
     public void invalidOwnerOfNumbers() {
         int initCount = getCountOrder();
-        String msg = "Неверный формат";
         new MainPage()
                 .toPayPage()
-                .setInvalidValue(getCardInfo(approvedCard(),
-                                checkYear(0), checkMonth(0),
-                                invalidOwner(generateValue("ru").numerify("###")), cvv()),
-                        msg);
+                .shouldBeMsgWrongFormat(getCardInfo(getApprovedCard(),
+                                getYear(0), getMonth(0),
+                                setInvalidValue(generateValue("ru").numerify("###")), getCvv()));
         assertEquals(initCount, getCountOrder());
     }
 
     @Test
     public void invalidOwnerOfSymbol() {
         int initCount = getCountOrder();
-        String msg = "Неверный формат";
         new MainPage()
                 .toPayPage()
-                .setInvalidValue(getCardInfo(approvedCard(),
-                                checkYear(0), checkMonth(0), invalidOwner(symbol()), cvv()),
-                        msg);
+                .shouldBeMsgWrongFormat(getCardInfo(getApprovedCard(),
+                                getYear(0), getMonth(0), setInvalidValue(getSymbolString()), getCvv()));
         assertEquals(initCount, getCountOrder());
     }
 
     @Test
     public void invalidOwnerLengthIs70() {
         int initCount = getCountOrder();
-        String msg = "Количество символов не более 70";
         new MainPage()
                 .toPayPage()
-                .setInvalidValue(getCardInfo(approvedCard(),
-                                checkYear(0), checkMonth(0),
-                                invalidOwner(generateValue("en").letterify("?").repeat(70)), cvv()),
-                        msg);
+                .shouldBeMsgMaxSymbol(getCardInfo(getApprovedCard(),
+                                getYear(0), getMonth(0),
+                                setInvalidValue(generateValue("en").letterify("?").repeat(70)), getCvv()));
         assertEquals(initCount, getCountOrder());
     }
 
     @Test
     public void invalidCVCLessOne() {
         int initCount = getCountOrder();
-        String msg = "Неверный формат";
         new MainPage()
                 .toPayPage()
-                .setInvalidValue(getCardInfo(approvedCard(),
-                                checkYear(0), checkMonth(0), validOwner(),
-                                invalidCVV(generateValue("en").numerify("##"))),
-                        msg);
+                .shouldBeMsgWrongFormat(getCardInfo(getApprovedCard(),
+                                getYear(0), getMonth(0), getValidOwner(),
+                                setInvalidValue(generateValue("en").numerify("##"))));
         assertEquals(initCount, getCountOrder());
     }
 
@@ -276,36 +241,35 @@ public class PayTest {
     public void lengthCVCOfSymbolAndLatin() {
         int length = 0;
         assertEquals(length, new MainPage().toPayPage()
-                .lengthCVCField(symbol()));
+                .getLengthCVCField(getSymbolString()));
     }
 
     @Test
     public void lengthCVCField() {
         int length = 3;
         assertEquals(length, new MainPage().toPayPage()
-                .lengthCVCField(generateValue("en").numerify("####")));
+                .getLengthCVCField(generateValue("en").numerify("####")));
     }
 
     @Test
     public void emptyFields() {
-        String msg = "Поле обязательно для заполнения";
         new MainPage()
-                .toPayPage().emptyFields(msg);
+                .toPayPage().shouldBeMsgEmptyFields();
     }
 
     @Test
     public void successMsgClose() {
         new MainPage()
                 .toPayPage().
-                successNotificationClose(getCardInfo(approvedCard(), checkYear(0), checkMonth(0),
-                        validOwner(), cvv()));
+                successNotificationClose(getCardInfo(getApprovedCard(), getYear(0), getMonth(0),
+                        getValidOwner(), getCvv()));
     }
 
     @Test
     public void failedMsgClose() {
         new MainPage()
                 .toPayPage().
-                failedNotificationClose(getCardInfo(randomNumber(), checkYear(0), checkMonth(0),
-                        validOwner(), cvv()));
+                failedNotificationClose(getCardInfo(getRandomCard(), getYear(0), getMonth(0),
+                        getValidOwner(), getCvv()));
     }
 }
